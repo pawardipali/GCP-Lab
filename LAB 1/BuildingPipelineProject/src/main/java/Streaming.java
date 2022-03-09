@@ -15,7 +15,7 @@ public class Streaming {
         dataflowPipelineOptions.setJobName("StreamingIngestion");
         dataflowPipelineOptions.setProject("qwiklabs-gcp-03-1e261850a8ae");
         dataflowPipelineOptions.setRegion("australia-southeast1");
-        dataflowPipelineOptions.setGcpTempLocation("gs://tmp123121//demo");
+        dataflowPipelineOptions.setGcpTempLocation("gs://temp123121//demo");
         dataflowPipelineOptions.setRunner(DataflowRunner.class);
 
         Pipeline pipeline= Pipeline.create(dataflowPipelineOptions);
@@ -30,7 +30,7 @@ public class Streaming {
         pipeline.run();
 
     }
-   private static class ConvertorStringBq extends DoFn<String,TableRow> {
+   public static class ConvertorStringBq extends DoFn<String,TableRow> {
         public void processing(ProcessContext processContext){
             TableRow tableRow=new TableRow().set("message",processContext.element().toString())
                     .set("messageid",processContext.element().toString()+":"+processContext.timestamp().toString())
