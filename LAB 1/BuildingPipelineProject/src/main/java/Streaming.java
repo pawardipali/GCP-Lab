@@ -15,7 +15,7 @@ public class Streaming {
         dataflowPipelineOptions.setJobName("StreamingIngestion");
         dataflowPipelineOptions.setProject("qwiklabs-gcp-03-1e261850a8ae");
         dataflowPipelineOptions.setRegion("australia-southeast1");
-        dataflowPipelineOptions.setGcpTempLocation("gs://tmp12312//demo");
+        dataflowPipelineOptions.setGcpTempLocation("gs://tmp123121");
         dataflowPipelineOptions.setRunner(DataflowRunner.class);
 
         Pipeline pipeline= Pipeline.create(dataflowPipelineOptions);
