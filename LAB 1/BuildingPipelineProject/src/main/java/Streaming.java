@@ -12,18 +12,18 @@ import org.apache.beam.sdk.values.PCollection;
 public class Streaming {
     public static void main(String[] args) {
         DataflowPipelineOptions dataflowPipelineOptions= PipelineOptionsFactory.as(DataflowPipelineOptions.class);
-        dataflowPipelineOptions.setJobName("StreamingIngestion");
-        dataflowPipelineOptions.setProject("qwiklabs-gcp-03-1e261850a8ae");
-        dataflowPipelineOptions.setRegion("australia-southeast1");
-        dataflowPipelineOptions.setGcpTempLocation("gs://temp123121//demo");
+        dataflowPipelineOptions.setJobName("usecase1-labid-10");
+        dataflowPipelineOptions.setProject("nttdata-c4e-bde");
+        dataflowPipelineOptions.setRegion("europe-west4");
+        dataflowPipelineOptions.setGcpTempLocation("gs://c4e-uc1-dataflow-temp-10");
         dataflowPipelineOptions.setRunner(DataflowRunner.class);
 
         Pipeline pipeline= Pipeline.create(dataflowPipelineOptions);
 
-        PCollection<String> pubsubmessage=pipeline.apply(PubsubIO.readStrings().fromTopic("projects/qwiklabs-gcp-03-1e261850a8ae/topics/LabITDemo"));
+        PCollection<String> pubsubmessage=pipeline.apply(PubsubIO.readStrings().fromTopic("projects/nttdata-c4e-bde/topics/uc1-dlq-topic-10"));
         PCollection<TableRow> bqrow=pubsubmessage.apply(ParDo.of(new ConvertorStringBq()));
 
-        bqrow.apply(BigQueryIO.writeTableRows().to("qwiklabs-gcp-03-1e261850a8ae:smalltech.pubsubStream")
+        bqrow.apply(BigQueryIO.writeTableRows().to("nttdata-c4e-bde:uc1_10.account")
                 .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_NEVER)
                 .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND));
 
@@ -31,10 +31,11 @@ public class Streaming {
 
     }
    public static class ConvertorStringBq extends DoFn<String,TableRow> {
+        @ProcessElement 
         public void processing(ProcessContext processContext){
-            TableRow tableRow=new TableRow().set("message",processContext.element().toString())
-                    .set("messageid",processContext.element().toString()+":"+processContext.timestamp().toString())
-                    .set("messageprocessingtime",processContext.timestamp().toString());
+            TableRow tableRow=new TableRow().set("id",processContext.element().toString())
+                    .set("name",processContext.element().toString()+":"+processContext.timestamp().toString())
+                    .set("surname",processContext.timestamp().toString());
             processContext.output(tableRow);
 
         }
