@@ -13,17 +13,17 @@ public class Streaming {
     public static void main(String[] args) {
         DataflowPipelineOptions dataflowPipelineOptions= PipelineOptionsFactory.as(DataflowPipelineOptions.class);
         dataflowPipelineOptions.setJobName("StreamingIngestion");
-        dataflowPipelineOptions.setProject("qwiklabs-gcp-04-a553dc073e14");
+        dataflowPipelineOptions.setProject("qwiklabs-gcp-03-1e261850a8ae");
         dataflowPipelineOptions.setRegion("australia-southeast1");
         dataflowPipelineOptions.setGcpTempLocation("gs://tmp12312//demo");
         dataflowPipelineOptions.setRunner(DataflowRunner.class);
 
         Pipeline pipeline= Pipeline.create(dataflowPipelineOptions);
 
-        PCollection<String> pubsubmessage=pipeline.apply(PubsubIO.readStrings().fromTopic("projects/qwiklabs-gcp-04-a553dc073e14/topics/LabITDemo"));
+        PCollection<String> pubsubmessage=pipeline.apply(PubsubIO.readStrings().fromTopic("projects/qwiklabs-gcp-03-1e261850a8ae/topics/LabITDemo"));
         PCollection<TableRow> bqrow=pubsubmessage.apply(ParDo.of(new ConvertorStringBq()));
 
-        bqrow.apply(BigQueryIO.writeTableRows().to("qwiklabs-gcp-04-a553dc073e14:smaltech.pubsubStream")
+        bqrow.apply(BigQueryIO.writeTableRows().to("qwiklabs-gcp-03-1e261850a8ae:smalltech.pubsubStream")
                 .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_NEVER)
                 .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND));
 
